@@ -1,0 +1,363 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><div class="notes-page">
+  <div id="linksContainer"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><style>* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #05050a;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.notes-page {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.note-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.note-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,234,255,0.35);
+  box-shadow:
+    0 0 14px rgba(0,234,255,0.35),
+    0 0 34px rgba(0,119,255,0.25);
+}
+
+.note-check {
+  width: 24px;
+  height: 24px;
+  accent-color: #00eaff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.note-link {
+  color: #00eaff;
+  font-size: 20px;
+  font-weight: 900;
+  text-decoration: none;
+  text-shadow:
+    0 0 8px rgba(0,234,255,0.9),
+    0 0 18px rgba(0,119,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-card.used .note-link {
+  color: #7aff7a;
+  text-shadow:
+    0 0 8px rgba(0,255,120,0.9),
+    0 0 18px rgba(0,255,80,0.65);
+  text-decoration: line-through;
+}
+
+.status-text {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.status-text.green {
+  color: #00ff7b;
+  text-shadow:
+    0 0 8px rgba(0,255,123,0.9),
+    0 0 18px rgba(0,255,80,0.65);
+}
+
+.status-text.red {
+  color: #ff2b4f;
+  text-shadow:
+    0 0 8px rgba(255,43,79,0.9),
+    0 0 18px rgba(255,0,45,0.65);
+}
+
+.menu-btn {
+  border: none;
+  background: transparent;
+  color: #00eaff;
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+  text-shadow:
+    0 0 8px rgba(0,234,255,0.9),
+    0 0 18px rgba(0,119,255,0.65);
+  flex-shrink: 0;
+}
+
+.status-menu {
+  position: absolute;
+  right: 10px;
+  top: 58px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(5,5,10,0.96);
+  border: 1px solid rgba(0,234,255,0.35);
+  border-radius: 14px;
+  padding: 10px;
+  z-index: 20;
+  box-shadow:
+    0 0 14px rgba(0,234,255,0.35),
+    0 12px 28px rgba(0,0,0,0.45);
+}
+
+.status-menu.show {
+  display: flex;
+}
+
+.status-option {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.06);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.status-option.green {
+  color: #00ff7b;
+}
+
+.status-option.red {
+  color: #ff2b4f;
+}
+
+.copy-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 13px;
+  background: rgba(0,234,255,0.12);
+  color: #00eaff;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow:
+    0 0 10px rgba(0,234,255,0.45),
+    0 0 22px rgba(0,119,255,0.25);
+  text-shadow: 0 0 8px rgba(0,234,255,0.9);
+  flex-shrink: 0;
+}
+
+.copy-btn.copied {
+  color: #00ff7b;
+}
+
+.copy-btn.error {
+  color: #ff2b4f;
+}</style><script>const firebaseConfig = {
+  apiKey: "AIzaSyC9b5p6Efm9RWzD9cJ0hFdmoHEa-HaT4bA",
+  authDomain: "darii-2aa81.firebaseapp.com",
+  databaseURL: "https://darii-2aa81-default-rtdb.firebaseio.com",
+  projectId: "darii-2aa81",
+  storageBucket: "darii-2aa81.firebasestorage.app",
+  messagingSenderId: "173043727243",
+  appId: "1:173043727243:web:617fc0f293342f2599cd8e",
+  measurementId: "G-S53LT85MY6"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const enlaces = [
+  { nombre: "anival3474", url: "https://www.tiktok.com/@anival3474" },
+  { nombre: "turbo.tutoblox", url: "https://www.tiktok.com/@turbo.tutoblox" },
+  { nombre: "dragon.fire.ff", url: "https://www.tiktok.com/@dragon.fire.ff" },
+  { nombre: "entrometidos69", url: "https://www.tiktok.com/@entrometidos69" },
+  { nombre: "xp.overfil", url: "https://www.tiktok.com/@xp.overfil" },
+  { nombre: "blody.tech", url: "https://www.tiktok.com/@blody.tech" },
+  { nombre: "sofia_fire87", url: "https://www.tiktok.com/@sofia_fire87" },
+  { nombre: "melany.gig", url: "https://www.tiktok.com/@melany.gig" },
+  { nombre: "maximiliano9007", url: "https://www.tiktok.com/@maximiliano9007" },
+  { nombre: "mirelys8479", url: "https://www.tiktok.com/@mirelys8479" },
+  { nombre: "avatarmp5", url: "https://www.tiktok.com/@avatarmp5" },
+  { nombre: "maikel6762", url: "https://www.tiktok.com/@maikel6762" },
+  { nombre: "marielytips", url: "https://www.tiktok.com/@marielytips" },
+  { nombre: "lagiongrip0", url: "https://www.tiktok.com/@lagiongrip0" },
+  { nombre: "pollitoff948", url: "https://www.tiktok.com/@pollitoff948" },
+  { nombre: "yankiroblox8", url: "https://www.tiktok.com/@yankiroblox8" },
+  { nombre: "oliver.david295", url: "https://www.tiktok.com/@oliver.david295" },
+  { nombre: "varvaroo76", url: "https://www.tiktok.com/@varvaroo76" },
+  { nombre: "noriega.blass", url: "https://www.tiktok.com/@noriega.blass" },
+  { nombre: "akar.turblox", url: "https://www.tiktok.com/@akar.turblox" },
+  { nombre: "rockytutox", url: "https://www.tiktok.com/@rockytutox" },
+  { nombre: "vanerdx3", url: "https://www.tiktok.com/@vanerdx3" },
+  { nombre: "rey.banana2", url: "https://www.tiktok.com/@rey.banana2" },
+  { nombre: "selenia.ros", url: "https://www.tiktok.com/@selenia.ros" },
+  { nombre: "guillermo.fermin34", url: "https://www.tiktok.com/@guillermo.fermin34" },
+  { nombre: "mario.castro3280", url: "https://www.tiktok.com/@mario.castro3280" },
+  { nombre: "rosalina.mel", url: "https://www.tiktok.com/@rosalina.mel" },
+  { nombre: "rosanna.nuez17", url: "https://www.tiktok.com/@rosanna.nuez17" },
+  { nombre: "rosanna.nez2", url: "https://www.tiktok.com/@rosanna.nez2" },
+  { nombre: "brittany_af_sensi", url: "https://www.tiktok.com/@brittany_af_sensi" },
+  { nombre: "ashley_gil_ff", url: "https://www.tiktok.com/@ashley_gil_ff" },
+  { nombre: "shadowstriker531", url: "https://www.tiktok.com/@shadowstriker531" },
+  { nombre: "paulflorentino7", url: "https://www.tiktok.com/@paulflorentino7" }
+];
+
+const container = document.getElementById('linksContainer');
+
+enlaces.forEach((item, index) => {
+  const row = document.createElement('div');
+  row.className = 'note-row';
+
+  row.innerHTML = `
+    <div class="note-card" data-id="${index}">
+      <input type="checkbox" class="note-check">
+
+      <a href="${item.url}" target="_blank" class="note-link">
+        ${item.nombre}
+      </a>
+
+      <span class="status-text"></span>
+
+      <button class="menu-btn">•••</button>
+
+      <div class="status-menu">
+        <button class="status-option green" data-status="con visitas">Con visitas</button>
+        <button class="status-option red" data-status="sin visitas">Sin visitas</button>
+      </div>
+    </div>
+
+    <button class="copy-btn">Copiar</button>
+  `;
+
+  container.appendChild(row);
+});
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {}
+  }
+
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let copied = false;
+
+  try {
+    copied = document.execCommand('copy');
+  } catch (e) {
+    copied = false;
+  }
+
+  document.body.removeChild(textarea);
+  return copied;
+}
+
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('.status-menu').forEach(menu => {
+    if (!menu.contains(e.target) && !e.target.classList.contains('menu-btn')) {
+      menu.classList.remove('show');
+    }
+  });
+});
+
+document.querySelectorAll('.note-row').forEach(row => {
+  const card = row.querySelector('.note-card');
+  const check = row.querySelector('.note-check');
+  const menuBtn = row.querySelector('.menu-btn');
+  const statusMenu = row.querySelector('.status-menu');
+  const statusText = row.querySelector('.status-text');
+  const options = row.querySelectorAll('.status-option');
+  const copyBtn = row.querySelector('.copy-btn');
+  const linkName = row.querySelector('.note-link');
+
+  const id = card.dataset.id;
+  const firebaseRef = db.ref('links/' + id);
+
+  firebaseRef.on('value', snapshot => {
+    const data = snapshot.val() || {};
+
+    check.checked = data.checked === true;
+    card.classList.toggle('used', check.checked);
+
+    statusText.textContent = data.status || '';
+    statusText.className = 'status-text';
+
+    if (data.status === 'con visitas') {
+      statusText.classList.add('green');
+    }
+
+    if (data.status === 'sin visitas') {
+      statusText.classList.add('red');
+    }
+  });
+
+  check.addEventListener('change', () => {
+    firebaseRef.update({
+      checked: check.checked
+    });
+  });
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    statusMenu.classList.toggle('show');
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      const status = option.dataset.status;
+
+      firebaseRef.update({
+        status: status
+      });
+
+      statusMenu.classList.remove('show');
+    });
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const textToCopy = linkName.textContent.trim();
+    const copied = await copyText(textToCopy);
+
+    copyBtn.classList.remove('copied', 'error');
+
+    if (copied) {
+      copyBtn.textContent = 'Copiado';
+      copyBtn.classList.add('copied');
+    } else {
+      copyBtn.textContent = 'Error';
+      copyBtn.classList.add('error');
+    }
+
+    setTimeout(() => {
+      copyBtn.textContent = 'Copiar';
+      copyBtn.classList.remove('copied', 'error');
+    }, 1200);
+  });
+});</script>
